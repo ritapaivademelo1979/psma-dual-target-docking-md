@@ -1,0 +1,21 @@
+integrator      = steep
+emtol           = 500            ; alvo de força máx. (kJ/mol/nm) — 500–1000 é típico
+emstep          = 0.01
+nsteps          = 100000
+
+; Vizinhança / não-ligadas (coerente com o resto do teu fluxo)
+nstlist         = 20
+cutoff-scheme   = Verlet
+coulombtype     = PME
+rcoulomb        = 1.2
+rlist           = 1.2
+rvdw            = 1.2
+vdw_modifier    = potential-switch
+rvdw-switch     = 0.9
+DispCorr        = EnerPres
+pbc             = xyz
+
+constraints     = h-bonds
+
+; ATIVAR AS POSRES QUE TENS NO TOPOLOGIA
+define          = -DPOSRES_PROT -DPOSRES_LIG
