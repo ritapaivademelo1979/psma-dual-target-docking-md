@@ -1,0 +1,129 @@
+# Molecular Dynamics Simulation Protocol
+
+This document describes the molecular dynamics (MD) simulation protocol used to study PSMA–conjugate complexes.
+
+All simulations were performed using GROMACS 2024.4 with GPU acceleration.
+
+---
+
+## 1. System Preparation
+
+### Protein
+
+- Structure: PSMA extracellular domain (PDB ID: 5O5R)
+- Force field: AMBER99SB-ILDN
+- Water model: TIP3P
+- Protonation state assigned at pH 7.4
+- Crystallographic waters removed prior to topology generation
+- Catalytic Zn2+ ions retained
+
+Topology generation:
+gmx pdb2gmx -f PSMA.pdb -o protein.gro -p protein.top -water tip3p -ignh
+
+---
+
+### Ligands
+
+- Ligand parameters generated using ACPYPE
+- Underlying force field: GAFF2
+- Partial charges derived from quantum mechanical calculations (CHELPG)
+- prmtop/inpcrd files converted to GROMACS format
+
+acpype -p ligand.prmtop -x ligand.inpcrd -o gmx
+
+Protein and ligand coordinate files were merged to construct each PSMA–conjugate complex.
+
+---
+
+## 2. Simulation Box and Solvation
+
+- Box type: cubic
+- Minimum solute–box distance: 1.0 nm
+- Water model: TIP3P (spc216.gro)
+- System neutralized
+- Ionic strength: 0.15 M NaCl
+
+gmx editconf -f complex.gro -o complex_box.gro -c -d 1.0 -bt cubic  
+gmx solvate -cp complex_box.gro -cs spc216.gro -o complex_solv.gro -p complex.top  
+gmx genion -neutral -conc 0.15  
+
+---
+
+## 3. Energy Minimization
+
+- Integrator: steepest descent
+- Maximum steps: 100,000
+- Convergence criterion: 500 kJ/mol/nm
+- Position restraints applied to protein and ligand
+
+Nonbonded interactions:
+- PME electrostatics
+- Real-space cutoff: 1.4 nm
+- van der Waals cutoff: 1.4 nm
+- Verlet cutoff scheme
+- Dispersion correction: EnerPres
+
+---
+
+## 4. Equilibration
+
+### NVT Equilibration
+
+- Duration: 500 ps
+- Integrator: stochastic dynamics (Langevin-type)
+- Time step: 1 fs
+- Temperature: 310.15 K
+- Thermostat: V-rescale
+- Position restraints applied to protein and ligand
+
+### NPT Equilibration
+
+- Duration: 500 ps
+- Integrator: stochastic dynamics
+- Time step: 1 fs
+- Temperature: 310.15 K
+- Pressure: 1 bar
+- Barostat: Parrinello–Rahman (isotropic)
+- Position restraints applied to protein only
+
+Electrostatics and cutoffs identical to production settings.
+
+---
+
+## 5. Production Simulations
+
+- Duration: 400 ns per replica
+- Replicas: 3 independent simulations per system
+- Time step: 2 fs
+- Integrator: stochastic dynamics
+- Temperature: 310.15 K
+- Pressure: 1 bar
+- Thermostat: V-rescale
+- Barostat: Parrinello–Rahman (isotropic)
+- PME electrostatics
+- Real-space cutoff: 1.4 nm
+- van der Waals cutoff: 1.4 nm
+- LINCS constraints on hydrogen bonds
+- No position restraints
+
+Trajectory frames saved every 10 ps.
+
+Independent replicas were initiated using distinct random seeds to ensure statistical independence.
+
+---
+
+## 6. Analysis
+
+Analyses were performed using MDAnalysis and custom Python scripts:
+
+- Backbone RMSD
+- Residue-level RMSF
+- Radius of gyration
+- Protein–ligand contact analysis
+- Minimum-distance profiling
+
+All analysis scripts are available in the repository.
+
+---
+
+End of MD protocol.
