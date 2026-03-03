@@ -34,7 +34,7 @@ This repository contains the docking setup, molecular dynamics (MD) parameter fi
 - Python 3.10  
 - MDAnalysis  
 - NumPy  
-- Matplotlib  
+- Pandas
 
 
 
