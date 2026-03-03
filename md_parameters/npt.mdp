@@ -1,0 +1,45 @@
+; ===== NPT (500 ps, estável) =====
+integrator                  = sd
+dt                          = 0.001
+nsteps                      = 500000
+
+; I/O
+nstxout                     = 0
+nstvout                     = 0
+nstenergy                   = 1000
+nstlog                      = 1000
+nstxout-compressed          = 1000
+
+; Não-ligadas
+nstlist                     = 20
+cutoff-scheme               = Verlet
+coulombtype                 = PME
+rcoulomb                    = 1.2
+rlist                       = 1.2
+rvdw                        = 1.2
+vdw_modifier                = potential-switch
+rvdw-switch                 = 0.9
+DispCorr                    = EnerPres
+pbc                         = xyz
+
+; Temperatura (Langevin via 'sd')
+tcoupl                      = V-rescale
+tc-grps                     = Complex Water_and_ions
+tau-t                       = 0.5 0.5
+ref-t                       = 310.15 310.15
+bd-fric                     = 1.0
+
+; Pressão (baróstato robusto com restraints)
+pcoupl                      = Parrinello-Rahman
+pcoupltype                  = isotropic
+tau-p                       = 2.0
+ref-p                       = 1.0
+compressibility             = 4.5e-5
+refcoord_scaling            = com
+
+constraints                 = h-bonds
+continuation                = yes
+gen_vel                     = no
+
+; Restrições de posição: só PROTEÍNA (não restrinjo o ligando aqui)
+define                      = -DPOSRES_PROT

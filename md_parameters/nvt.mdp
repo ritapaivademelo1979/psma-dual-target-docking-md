@@ -1,0 +1,37 @@
+; ===== NVT (500 ps) =====
+integrator                  = sd
+dt                          = 0.001
+nsteps                      = 500000          ; 500 ps
+
+; I/O
+nstxout                     = 5000
+nstvout                     = 5000
+nstenergy                   = 1000
+nstlog                      = 1000
+nstxout-compressed          = 1000
+
+; Não-ligadas (coerente com o teu setup)
+nstlist                     = 20
+cutoff-scheme               = Verlet
+coulombtype                 = PME
+rcoulomb                    = 1.2
+rlist                       = 1.2
+rvdw                        = 1.2
+vdw_modifier                = potential-switch
+rvdw-switch                 = 0.9
+DispCorr                    = EnerPres
+pbc                         = xyz
+
+; Temperatura (Langevin via 'sd')
+tcoupl                      = V-rescale
+tc-grps                     = Complex Water_and_ions
+tau-t                       = 0.5 0.5
+ref-t                       = 310.15 310.15
+
+constraints                 = h-bonds
+gen_vel                     = yes
+gen_temp                    = 310.15
+gen_seed                    = -1
+
+; Posres durante este NVT (tens os guards no .top)
+define                      = -DPOSRES_PROT -DPOSRES_LIG

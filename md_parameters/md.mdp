@@ -1,0 +1,45 @@
+; ===== PRODUÇÃO (400 ns) ultra estável =====
+integrator                  = sd
+dt                          = 0.002
+nsteps                      = 200000000       ; 400 ns
+
+; I/O
+nstxout                     = 5000
+nstvout                     = 0
+nstxout-compressed          = 5000           ; 10 ps por frame
+nstenergy                   = 5000
+nstlog                      = 1000
+
+; Não-ligadas
+nstlist                     = 20
+cutoff-scheme               = Verlet
+coulombtype                 = PME
+rcoulomb                    = 1.4
+rlist                       = 1.4
+rvdw                        = 1.4
+vdw_modifier                = potential-switch
+rvdw-switch                 = 0.9
+DispCorr                    = EnerPres
+pbc                         = xyz
+
+; Temperatura
+tcoupl                      = V-rescale
+tc-grps                     = Complex Water_and_ions
+tau-t                       = 0.5 0.5
+ref-t                       = 310.15 310.15
+bd-fric                     = 1.0
+
+; Pressão (baróstato estável)
+pcoupl                      = Parrinello-Rahman
+pcoupltype                  = isotropic
+tau-p                       = 3.0             ; ligeiramente mais suave
+ref-p                       = 1.0
+compressibility             = 4.5e-5
+refcoord_scaling            = com
+
+constraints                 = h-bonds
+constraint-algorithm        = lincs
+continuation                = yes
+gen_vel                     = no
+; sem POSRES em produção
+; define =
