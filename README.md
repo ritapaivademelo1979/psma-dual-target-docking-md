@@ -1,4 +1,5 @@
-[![DOI](https://zenodo.org/badge/XXXX.svg)](https://doi.org/10.5281/zenodo.18851572)
+[![DOI](https://zenodo.org/badge/XXXX.svg)](https://doi.org/10.5281/zenodo.18936110)
+
 
 # psma-dual-target-docking-md
 Reproducible docking and molecular dynamics workflows for PSMA Glu–urea–Lys conjugates (JCIM 2026)
